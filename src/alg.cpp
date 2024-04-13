@@ -45,7 +45,7 @@ std::string infx2pstfx(std::string inf) {
           while (Prioritet(elem) >= p) {
             rez = rez + elem + ' ';
             stack1.pop();
-            elem = stack1.get()
+            elem = stack1.get();
           }
           stack1.push(x);
         }
