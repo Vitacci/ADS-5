@@ -40,6 +40,13 @@ std::string infx2pstfx(std::string inf) {
             stack1.pop();
             elem = stack1.get();
           }
+          stack1.pop(x);
+        } else {
+          while (Prioritet(elem) >= p) {
+            rez = rez + elem + ' ';
+            stack1.pop();
+            elem = stack1.get()
+          }
           stack1.push(x);
         }
       }
@@ -88,6 +95,9 @@ int eval(std::string pref) {
     } else {
       int v;
       v = stack1.get();
+      stack1.pop();
+      stack1.push(summa(p, v, elem));
+      int p = stack1.get();
       stack1.pop();
       stack1.push(summa(p, v, elem));
     }
