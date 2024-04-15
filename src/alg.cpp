@@ -3,104 +3,92 @@
 #include <map>
 #include "tstack.h"
 
-int Prioritet(char x) {
-  switch(x) {
-    case '(':
-      return 0;
-    case ')':
-      return 1;
-    case '+':
-      return 2;
-    case '-':
-      return 2;
-    case '*':
-      return 3;
-    case '/':
-    default:
-      return -1;
-  }
+bool operator(char oper) {
+  return (oper == '+' || oper == '-' || oper == '(' || oper == ')' || oper == '/' || oper == '*');
+}
+bool di(char v) {
+  return (v >= '0' && v <= '9');
+}
+
+int prioritet(char oper) {
+  if (oper == '-' || oper == '+')
+    return 1;
+  if (oper == '/' || oper == '*')
+    return 2;
+  return 0;
 }
 std::string infx2pstfx(std::string inf) {
-  std::string rez, rez1;
-  TStack<char, 100>stack1;
-  for (auto& x : inf) {
-    int p;
-    p = Prioritet(x);
-    if (p == -1) {
-      rez = rez + x + ' ';
-    } else {
-      char elem;
-      elem = stack1.get();
-      if (p == 0 || Prioritet(elem) < p || stack1.isEmpty()) {
-        stack1.push(x);
-      } else {
-        if (x == ')') {
-          while (Prioritet(elem) >= p) {
-            rez = rez + elem + ' ';
-            stack1.pop();
-            elem = stack1.get();
-          }
-          stack1.pop(x);
-        } else {
-          while (Prioritet(elem) >= p) {
-            rez = rez + elem + ' ';
-            stack1.pop();
-            elem = stack1.get();
-          }
-          stack1.push(x);
+  std::string rez;
+  int f = 0;
+  TStack <char, 100> stack1;
+  for (char i : inf) {
+    if (di(i)) {
+      i++;
+      if (f == 1) {
+        rez += i;
+        continue;
+      }
+      rez = rez + ' ' + t;
+    } else if (operator(i)) {
+      if (i == '(') {
+        stack1.push(i);
+      } else if (stack1.checkEmpty()) {
+        stack1.push(i);
+      } else if (prioritet(i) > prioritet(stack1.get())) {
+        stack1.push(i);
+      } else if (i == ')') {
+        while (stack1.get() != '(') {
+          rez = rez + ' ' + stack1.get();
+          stack1.pop();
         }
+        stack1.pop();
+      } else {
+        int u = prioritet(i);
+        int o = prioritet(stack1.get());
+        while (!stack1.chekEmpty() && u <= o) {
+          rez = rez + ' ' + stack1.get();
+          stack1.pop();
+        }
+        stack1.push(i);
       }
     }
   }
-  while (!stack1.isEmpty()) {
-    rez = rez + stack1.get() + ' ';
+  while (!stack1.checkEmpty()) {
+    rez = rez + ' ' + stack1.get();
     stack1.pop();
   }
-  for (int i = 0; i < rez.size() - 1; i++)
-    rez1 += rez[i];
-  return rez1;
-}
-
-int summa(const int& p, const int& v, const int& x) {
-  switch(x) {
-    case '+':
-      return p + v;
-    case '-':
-      return p - v;
-    case '/':
-      return p / v;
-    case '*':
-      return p * v;
-    default:
-      return 0;
-  }
+  return rez;
 }
 
 int eval(std::string pref) {
-  TStack<int, 100> stack1;
-  std::string rez = "";
-  for (int i = 0; i < pref.size(); i++) {
-    char elem = pref[i];
-    if (Prioritet(elem) == -1) {
-      if (pref[i] == ' ') {
-        continue;
-      } else if (isdigit(pref[i+1])) {
-        rez += pref[i];
-        continue;
-      } else {
-        rez += pref[i];
-        stack1.push(atoi(rez.c_str()));
-        rez = "";
+  TStack<int, 100> stack2;
+  for (char i : pref) {
+    if (di(i)) {
+      stack2.push(i - '0');
+    } else if (operator(i)) {
+      int u = stack2.get();
+      stack2.pop();
+      int o = stack2.get();
+      stack2.pop();
+      switch(i) {
+        case '+':
+          stack2.push(u + o);
+          break;
+        case '-':
+          stack2.push(o - u);
+          break;
+        case '*':
+          stack2.push(u * o);
+          break;
+        case '/':
+          stack2.push(o / u);
+          break;
+        default:
+          continue;
       }
     } else {
-      int v;
-      v = stack1.get();
-      stack1.pop();
-      stack1.push(summa(p, v, elem));
-      int p = stack1.get();
-      stack1.pop();
-      stack1.push(summa(p, v, elem));
+      continue;
     }
   }
-  return stack1.get();
+  return stack2.get();
 }
