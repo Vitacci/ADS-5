@@ -4,7 +4,7 @@
 #include "tstack.h"
 
 bool operator(char oper) {
-  return (oper == '+' || oper == '-' || oper == '(' || 
+  return (oper == '+' || oper == '-' || oper == '(' ||
     oper == ')' || oper == '/' || oper == '*');
 }
 bool di(char v) {
