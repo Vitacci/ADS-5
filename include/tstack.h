@@ -6,12 +6,12 @@
 
 template<typename T, int size>
 class TStack {
-private:
+ private:
     T StData[100];
     int top;
 
-public:
-    TStack(): top(-1) {}
+ public:
+    TStack() : top(-1) {}
     void push(T value) {
       if (!full())
         StData[++top] = value;
