@@ -3,93 +3,82 @@
 #include <map>
 #include "tstack.h"
 
-bool operator(char oper) {
-  return (oper == '+' || oper == '-' || oper == '(' ||
-    oper == ')' || oper == '/' || oper == '*');
-}
-bool di(char v) {
-  return (v >= '0' && v <= '9');
-}
-
-int prioritet(char oper) {
-  if (oper == '-' || oper == '+')
-    return 1;
-  if (oper == '/' || oper == '*')
-    return 2;
+int Priorety(char digit) {
+  if (digit == '*' || digit == '/') return 2;
+  if (digit == '+' || digit == '-') return 1;
   return 0;
 }
+
+bool BoolOperator(char c) {
+  return (c == '-' || c == '+' || c == '*' || c == '/');
+}
+
 std::string infx2pstfx(std::string inf) {
-  std::string rez;
-  int f = 0;
-  TStack <char, 100> stack1;
-  for (char i : inf) {
-    if (di(i)) {
-      i++;
-      if (f == 1) {
-        rez += i;
-        continue;
-      }
-      rez = rez + ' ' + t;
-    } else if (operator(i)) {
-      if (i == '(') {
-        stack1.push(i);
-      } else if (stack1.checkEmpty()) {
-        stack1.push(i);
-      } else if (prioritet(i) > prioritet(stack1.get())) {
-        stack1.push(i);
-      } else if (i == ')') {
-        while (stack1.get() != '(') {
-          rez = rez + ' ' + stack1.get();
-          stack1.pop();
-        }
+  std::string postfix;
+  TStack<char, 100> stack1;
+  for (char c : inf) {
+    if (isdigit(c)) {
+      postfix = postfix + c + ' ';
+    } else if (c == '(') {
+      stack1.push(c);
+    } else if (BoolOperator(c)) {
+      while (!stack1.IsEmptyy() && \
+        Priorety(stack1.get()) >= Priorety(c)) {
+        postfix = postfix + stack1.get() + ' ';
         stack1.pop();
-      } else {
-        int u = prioritet(i);
-        int o = prioritet(stack1.get());
-        while (!stack1.chekEmpty() && u <= o) {
-          rez = rez + ' ' + stack1.get();
-          stack1.pop();
-        }
-        stack1.push(i);
       }
+      stack1.push(c);
+    } else if (c == ')') {
+      while (!stack1.IsEmptyy() && stack1.get() != '(') {
+        postfix = postfix + stack1.get() + ' ';
+        stack1.pop();
+      }
+      stack1.pop();
     }
   }
-  while (!stack1.checkEmpty()) {
-    rez = rez + ' ' + stack1.get();
+  while (!stack1.IsEmptyy()) {
+    postfix = postfix + stack1.get() + ' ';
     stack1.pop();
   }
-  return rez;
+  if (!postfix.empty()) {
+    postfix.pop_back();
+  }
+  return postfix;
 }
 
 int eval(std::string pref) {
   TStack<int, 100> stack2;
-  for (char i : pref) {
-    if (di(i)) {
-      stack2.push(i - '0');
-    } else if (operator(i)) {
-      int u = stack2.get();
+  std::string Value;
+  for (char c : post) {
+    if (isdigit(c)) {
+      Value += c;
+    } else if (Value != "") {
+      stack2.push(std::atoi(Value.c_str()));
+      Value = "";
+    }
+    if (BoolOperator(c)) {
+      int op2 = stack2.get();
       stack2.pop();
-      int o = stack2.get();
+      int op1 = stack2.get();
       stack2.pop();
-      switch (i) {
-        case '+':
-          stack2.push(u + o);
-          break;
-        case '-':
-          stack2.push(o - u);
-          break;
+      switch (c) {
         case '*':
-          stack2.push(u * o);
+          stack2.push(op1 * op2);
           break;
         case '/':
-          stack2.push(o / u);
+          stack2.push(op1 / op2);
           break;
-        default:
-          continue;
+        case '+':
+          stack2.push(op1 + op2);
+          break;
+        case '-':
+          stack2.push(op1 - op2);
+          break;
       }
-    } else {
-      continue;
     }
+  }
+  if (Value != "") {
+    stack2.push(std::atoi(Value.c_str()));
   }
   return stack2.get();
 }
