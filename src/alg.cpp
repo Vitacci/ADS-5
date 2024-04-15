@@ -49,7 +49,7 @@ std::string infx2pstfx(std::string inf) {
 int eval(std::string pref) {
   TStack<int, 100> stack2;
   std::string Value;
-  for (char c : post) {
+  for (char c : pref) {
     if (isdigit(c)) {
       Value += c;
     } else if (Value != "") {
