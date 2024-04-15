@@ -6,32 +6,25 @@
 template<typename T, int size>
 class TStack {
 private:
-  T arr[100];
+  T* stackArray;
   int top;
-
 public:
-  TStack(): top(-1) {}
-  void push(T value) {
-    if (!isFull())
-      arr[++top];
-    else
-      throw std::string("Full");
+  TStack(): top(-1) {
+    stackArray = new T[size];
   }
-  T get() const {
-    return arr[top];
+  void pop() {
+    if (top >= 0)
+      top--;
   }
-  T pop() {
-    if (isEmpty())
-      throw std::string("Empty");
-    else
-      return arr[top--];
-  }
-  bool isEmpty() const {
-    return top == -1;
-  }
-  bool isFull() const {
-    return top == size - 1;
-  }
+void push(T item) {
+  if (top < size - 1)
+    stackArray[++top] = item;
+}
+T get() const {
+  return stackArray[top];
+}
+bool checkEmpty() const {
+  return top == -1;
+}
 };
-
 #endif  // INCLUDE_TSTACK_H_
