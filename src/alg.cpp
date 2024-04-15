@@ -4,7 +4,8 @@
 #include "tstack.h"
 
 bool operator(char oper) {
-  return (oper == '+' || oper == '-' || oper == '(' || oper == ')' || oper == '/' || oper == '*');
+  return (oper == '+' || oper == '-' || oper == '(' || 
+    oper == ')' || oper == '/' || oper == '*');
 }
 bool di(char v) {
   return (v >= '0' && v <= '9');
@@ -70,7 +71,7 @@ int eval(std::string pref) {
       stack2.pop();
       int o = stack2.get();
       stack2.pop();
-      switch(i) {
+      switch (i) {
         case '+':
           stack2.push(u + o);
           break;
